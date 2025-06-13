@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: meu_banco
+    ports:
+      - 5433:5432
+    networks:
+      - private-postgres-api
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+networks:
+  private-postgres-api:
+    driver: bridge
+
+volumes:
+  pgdata:
