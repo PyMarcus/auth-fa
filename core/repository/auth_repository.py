@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy.future import select
 from core.security import verify_password
 from models import UserModel
@@ -34,3 +34,21 @@ class AuthRepository:
                 return None
 
             return user
+
+    async def get_all_user(self) -> List[UserModel]:
+        async with self.__db as session:
+            query = select(UserModel)
+            result = await session.execute(query)
+            users = result.scalars().all()
+
+            return users
+
+    async def create(self, user: UserModel) -> bool:
+        try:
+            async with self.__db as session:
+                session.add(user)
+                await session.commit()
+                return True
+        except Exception as e:
+            print(e)
+            return False

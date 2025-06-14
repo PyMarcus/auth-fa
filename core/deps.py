@@ -22,7 +22,11 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-async def get_current_user(token: str = Depends(oauth2_schema), auth_repository: AuthRepository = Depends(get_session)) -> UserModel:
+def get_auth_repository(session: AsyncSession = Depends(get_session)) -> AuthRepository:
+    return AuthRepository(session)
+
+
+async def get_current_user(token: str = Depends(oauth2_schema), auth_repository: AuthRepository = Depends(get_auth_repository)) -> UserModel:
     credential_exception: HTTPException = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Unauthorized credentials",
